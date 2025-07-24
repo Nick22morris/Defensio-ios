@@ -23,26 +23,23 @@ struct NotesModalView: View {
                     }
                 }
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        // Title Section
-                        Text(node.title)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.bottom, 10)
+                // ✅ Removed the ScrollView here and let WebView handle scrolling
+                VStack(alignment: .leading, spacing: 20) {
+                    // Title Section
+                    Text(node.title)
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 10)
 
-                        Divider().background(Color.white)
+                    Divider().background(Color.white)
 
-                        // Combined Body + Notes Section Rendered Together
-                        WebView(htmlContent: combineBodyAndNotes(node: node))
-                            .cornerRadius(10)
-                            .padding(.top, (node.body == nil || node.body!.isEmpty) ? 0 : 10)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, minHeight: UIScreen.main.bounds.height)
+                    // ✅ WebView handles its own scrolling now
+                    WebView(htmlContent: combineBodyAndNotes(node: node))
+                        .cornerRadius(10)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
+                .padding()
             }
         }
     }
@@ -51,12 +48,10 @@ struct NotesModalView: View {
     private func combineBodyAndNotes(node: ObjectionNode) -> String {
         var combinedContent = ""
         
-        // Add body if it exists
         if let body = node.body, !body.isEmpty {
             combinedContent += "\(body)<br><br>"
         }
         
-        // Add notes if they exist
         if let notes = node.notes, !notes.isEmpty {
             combinedContent += "<strong>Notes:</strong><br>\(notes)"
         }
@@ -74,7 +69,7 @@ struct WebView: UIViewRepresentable {
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
-        webView.scrollView.isScrollEnabled = true
+        webView.scrollView.isScrollEnabled = true // ✅ Ensuring WebView handles scrolling
         return webView
     }
 
